@@ -1,0 +1,32 @@
+name: Swift CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 'latest'
+
+    - name: Install dependencies
+      run: |
+        brew update
+        brew install swiftlint
+
+    - name: Build and run tests
+      run: |
+        xcodebuild clean build -scheme habitTracker -destination 'platform=iOS Simulator,name=iPhone 14' | xcpretty
+        xcodebuild test -scheme habitTracker -destination 'platform=iOS Simulator,name=iPhone 14' | xcpretty
